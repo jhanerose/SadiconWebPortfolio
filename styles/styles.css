@@ -125,7 +125,7 @@ section {
 }
 
 .theme-btn {
-  top: 5%;
+  top: 3%;
   right: 3%;
   width: 70px;
   height: 70px;
@@ -977,4 +977,40 @@ section {
 }
 body.thank-you .right-header .btn-con {
   margin-top: 2rem;
+}
+
+#timelapse .blogs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    max-width: none;
+    padding: 3rem;
+    margin: 0 auto;
+}
+
+.timelapse .blog {
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.timelapse .video-container {
+    width: 100%;
+    max-width: 960px;
+    margin: 2rem auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.timelapse .video-container video {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
