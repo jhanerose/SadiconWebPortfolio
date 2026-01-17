@@ -782,16 +782,19 @@
                 
                 const fireworks = [];
                 let lastFireworkTime = 0;
+                let nextFireworkDelay = Math.random() * 500 + 500;
                 
                 function animateFireworks(currentTime) {
-                    // Clear and fill background
-                    fireworksCtx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                    // Clear and fill background with slight trail effect
+                    fireworksCtx.fillStyle = 'rgba(0, 0, 0, 0.15)';
                     fireworksCtx.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
                     
-                    // Launch new fireworks
-                    if (currentTime - lastFireworkTime > Math.random() * 500 + 500) {
+                    // Launch new fireworks at intervals
+                    if (currentTime - lastFireworkTime > nextFireworkDelay) {
                         fireworks.push(new Firework());
                         lastFireworkTime = currentTime;
+                        nextFireworkDelay = Math.random() * 500 + 500;
+                        console.log('Firework launched! Total active:', fireworks.length);
                     }
                     
                     // Update and draw all fireworks
@@ -808,8 +811,10 @@
                 }
                 
                 function startFireworksAnimation() {
-                    console.log('Fireworks animation started with canvas size:', fireworksCanvas.width, 'x', fireworksCanvas.height);
-                    animateFireworks(0);
+                    console.log('🎆 Fireworks animation started!');
+                    console.log('Canvas size:', fireworksCanvas.width, 'x', fireworksCanvas.height);
+                    lastFireworkTime = performance.now();
+                    animateFireworks(lastFireworkTime);
                 }
                 
                 function resizeFireworksCanvas() {
@@ -823,15 +828,14 @@
                 
                 function initFireworks() {
                     if (!fireworksAnimationRunning) {
-                        setTimeout(() => {
-                            resizeFireworksCanvas();
-                            if (fireworksCanvas.width > 0 && fireworksCanvas.height > 0) {
-                                fireworksAnimationRunning = true;
-                                startFireworksAnimation();
-                            } else {
-                                console.error('Canvas dimensions invalid:', fireworksCanvas.width, 'x', fireworksCanvas.height);
-                            }
-                        }, 200);
+                        resizeFireworksCanvas();
+                        if (fireworksCanvas.width > 0 && fireworksCanvas.height > 0) {
+                            fireworksAnimationRunning = true;
+                            console.log('✨ Fireworks initialized and ready!');
+                            startFireworksAnimation();
+                        } else {
+                            console.error('Canvas dimensions invalid:', fireworksCanvas.width, 'x', fireworksCanvas.height);
+                        }
                     }
                 }
                 
@@ -839,11 +843,26 @@
                     resizeFireworksCanvas();
                 });
                 
-                // Initialize fireworks when page loads
+                // Listen for when the fireworks section becomes visible via navigation
+                const fireworksSection = document.getElementById('fireworks');
+                const observer = new MutationObserver(() => {
+                    if (fireworksSection.style.display !== 'none' && !fireworksAnimationRunning) {
+                        initFireworks();
+                    }
+                });
+                
+                observer.observe(fireworksSection, {
+                    attributes: true,
+                    attributeFilter: ['style', 'class']
+                });
+                
+                // Also initialize immediately when page loads
                 if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', initFireworks);
+                    document.addEventListener('DOMContentLoaded', () => {
+                        setTimeout(initFireworks, 100);
+                    });
                 } else {
-                    initFireworks();
+                    setTimeout(initFireworks, 100);
                 }
             </script>
         </section>
