@@ -11,6 +11,160 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Fireworks Styles */
+        #fireworks .fireworks-container {
+            width: 100%;
+            max-width: 900px;
+            height: 500px;
+            margin: 20px auto;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            background: #000;
+        }
+
+        #fireworks canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: #000;
+        }
+
+        /* Snake Game Styles */
+        #snake-game .score-board {
+            background-color: #0f380f;
+            color: #9bbc0f;
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 1.2em;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        #snake-game canvas {
+            background-color: #9bbc0f;
+            border: 8px solid #0f380f;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        #snake-game .mobile-controls {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 80px);
+            grid-template-rows: repeat(3, 80px);
+            gap: 10px;
+            justify-content: center;
+        }
+
+        #snake-game .control-btn {
+            background-color: #0f380f;
+            color: #9bbc0f;
+            border: 3px solid #9bbc0f;
+            border-radius: 10px;
+            font-size: 2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.1s;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #snake-game .control-btn:active {
+            background-color: #9bbc0f;
+            color: #0f380f;
+            transform: scale(0.95);
+        }
+
+        #snake-game .control-btn.up {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        #snake-game .control-btn.left {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        #snake-game .control-btn.center {
+            grid-column: 2;
+            grid-row: 2;
+            background-color: #306230;
+            border-color: #0f380f;
+            font-size: 1em;
+            cursor: default;
+        }
+
+        #snake-game .control-btn.right {
+            grid-column: 3;
+            grid-row: 2;
+        }
+
+        #snake-game .control-btn.down {
+            grid-column: 2;
+            grid-row: 3;
+        }
+
+        #gameOverScreen {
+            position: absolute !important;
+            background-color: rgba(15, 56, 15, 0.95) !important;
+            color: #9bbc0f;
+            border-radius: 10px;
+            padding: 40px;
+            z-index: 10;
+        }
+
+        #gameOverScreen h2 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #9bbc0f;
+        }
+
+        #gameOverScreen p {
+            font-size: 1.5em;
+            margin: 10px 0;
+            color: #9bbc0f;
+        }
+
+        @media (max-width: 600px) {
+            #fireworks .fireworks-container {
+                margin: 10px auto;
+            }
+
+            #fireworks canvas {
+                min-height: 300px;
+            }
+
+            #snake-game .mobile-controls {
+                grid-template-columns: repeat(3, 70px);
+                grid-template-rows: repeat(3, 70px);
+            }
+
+            #snake-game .control-btn {
+                font-size: 1.5em;
+            }
+
+            #gameOverScreen {
+                padding: 30px !important;
+            }
+
+            #gameOverScreen h2 {
+                font-size: 2em;
+            }
+
+            #gameOverScreen p {
+                font-size: 1.2em;
+            }
+        }
+    </style>
 </head>
 <body class="main-content">
     <header class="container header active" id="home">
@@ -500,6 +654,419 @@
                 </div>
             </div>
         </section>
+        <section class="container" id="fireworks">
+            <div class="main-title">
+                <h2>Fireworks <span>Screensaver</span><span class="bg-text">Fun</span></h2>
+            </div>
+            <div class="fireworks-container">
+                <canvas id="fireworksCanvas"></canvas>
+            </div>
+            <script>
+                const fireworksCanvas = document.getElementById('fireworksCanvas');
+                const fireworksCtx = fireworksCanvas.getContext('2d');
+                let fireworksAnimationRunning = false;
+                
+                // Define all classes and functions first
+                class Particle {
+                    constructor(x, y, color) {
+                        this.x = x;
+                        this.y = y;
+                        this.color = color;
+                        this.velocity = {
+                            x: (Math.random() - 0.5) * 8,
+                            y: (Math.random() - 0.5) * 8
+                        };
+                        this.alpha = 1;
+                        this.decay = Math.random() * 0.015 + 0.01;
+                        this.gravity = 0.05;
+                        this.size = Math.random() * 3 + 1;
+                    }
+                    
+                    update() {
+                        this.velocity.y += this.gravity;
+                        this.x += this.velocity.x;
+                        this.y += this.velocity.y;
+                        this.alpha -= this.decay;
+                    }
+                    
+                    draw() {
+                        fireworksCtx.save();
+                        fireworksCtx.globalAlpha = this.alpha;
+                        fireworksCtx.fillStyle = this.color;
+                        fireworksCtx.beginPath();
+                        fireworksCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        fireworksCtx.fill();
+                        fireworksCtx.restore();
+                    }
+                }
+                
+                class Firework {
+                    constructor() {
+                        this.x = Math.random() * fireworksCanvas.width;
+                        this.y = fireworksCanvas.height;
+                        this.targetY = Math.random() * fireworksCanvas.height * 0.5 + 50;
+                        this.velocity = (this.y - this.targetY) / 60;
+                        this.particles = [];
+                        this.exploded = false;
+                        this.color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+                        this.trailParticles = [];
+                    }
+                    
+                    update() {
+                        if (!this.exploded) {
+                            this.y -= this.velocity;
+                            
+                            if (Math.random() < 0.3) {
+                                this.trailParticles.push({
+                                    x: this.x,
+                                    y: this.y,
+                                    alpha: 0.5,
+                                    size: 2
+                                });
+                            }
+                            
+                            if (this.y <= this.targetY) {
+                                this.explode();
+                            }
+                        } else {
+                            this.particles.forEach((p, i) => {
+                                p.update();
+                                if (p.alpha <= 0) {
+                                    this.particles.splice(i, 1);
+                                }
+                            });
+                        }
+                        
+                        this.trailParticles.forEach((t, i) => {
+                            t.alpha -= 0.02;
+                            if (t.alpha <= 0) {
+                                this.trailParticles.splice(i, 1);
+                            }
+                        });
+                    }
+                    
+                    explode() {
+                        this.exploded = true;
+                        const particleCount = Math.random() * 50 + 100;
+                        
+                        for (let i = 0; i < particleCount; i++) {
+                            this.particles.push(new Particle(this.x, this.y, this.color));
+                        }
+                    }
+                    
+                    draw() {
+                        if (!this.exploded) {
+                            this.trailParticles.forEach(t => {
+                                fireworksCtx.save();
+                                fireworksCtx.globalAlpha = t.alpha;
+                                fireworksCtx.fillStyle = this.color;
+                                fireworksCtx.beginPath();
+                                fireworksCtx.arc(t.x, t.y, t.size, 0, Math.PI * 2);
+                                fireworksCtx.fill();
+                                fireworksCtx.restore();
+                            });
+                            
+                            fireworksCtx.fillStyle = this.color;
+                            fireworksCtx.beginPath();
+                            fireworksCtx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                            fireworksCtx.fill();
+                        } else {
+                            this.particles.forEach(p => p.draw());
+                        }
+                    }
+                    
+                    isDone() {
+                        return this.exploded && this.particles.length === 0;
+                    }
+                }
+                
+                const fireworks = [];
+                let lastFireworkTime = 0;
+                
+                function animateFireworks(currentTime) {
+                    // Clear and fill background
+                    fireworksCtx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                    fireworksCtx.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+                    
+                    // Launch new fireworks
+                    if (currentTime - lastFireworkTime > Math.random() * 500 + 500) {
+                        fireworks.push(new Firework());
+                        lastFireworkTime = currentTime;
+                    }
+                    
+                    // Update and draw all fireworks
+                    for (let i = fireworks.length - 1; i >= 0; i--) {
+                        fireworks[i].update();
+                        fireworks[i].draw();
+                        
+                        if (fireworks[i].isDone()) {
+                            fireworks.splice(i, 1);
+                        }
+                    }
+                    
+                    requestAnimationFrame(animateFireworks);
+                }
+                
+                function startFireworksAnimation() {
+                    console.log('Fireworks animation started with canvas size:', fireworksCanvas.width, 'x', fireworksCanvas.height);
+                    animateFireworks(0);
+                }
+                
+                function resizeFireworksCanvas() {
+                    const container = fireworksCanvas.parentElement;
+                    if (container) {
+                        fireworksCanvas.width = container.offsetWidth;
+                        fireworksCanvas.height = container.offsetHeight;
+                        console.log('Canvas resized to:', fireworksCanvas.width, 'x', fireworksCanvas.height);
+                    }
+                }
+                
+                function initFireworks() {
+                    if (!fireworksAnimationRunning) {
+                        setTimeout(() => {
+                            resizeFireworksCanvas();
+                            if (fireworksCanvas.width > 0 && fireworksCanvas.height > 0) {
+                                fireworksAnimationRunning = true;
+                                startFireworksAnimation();
+                            } else {
+                                console.error('Canvas dimensions invalid:', fireworksCanvas.width, 'x', fireworksCanvas.height);
+                            }
+                        }, 200);
+                    }
+                }
+                
+                window.addEventListener('resize', () => {
+                    resizeFireworksCanvas();
+                });
+                
+                // Initialize fireworks when page loads
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initFireworks);
+                } else {
+                    initFireworks();
+                }
+            </script>
+        </section>
+        <section class="container" id="snake-game">
+            <div class="main-title">
+                <h2>Snake <span>Game</span><span class="bg-text">Play</span></h2>
+            </div>
+            <div class="snake-game-container">
+                <div class="score-board">Score: <span id="score">0</span></div>
+                <div style="position: relative; display: flex; justify-content: center; margin: 20px 0;">
+                    <canvas id="gameCanvas" width="400" height="400"></canvas>
+                    <div id="gameOverScreen" style="position: absolute; display: none; flex-direction: column; justify-content: center; align-items: center; background-color: rgba(15, 56, 15, 0.95); border-radius: 10px; padding: 40px; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10;">
+                        <h2 style="color: #9bbc0f; font-size: 2em;">GAME OVER!</h2>
+                        <p style="color: #9bbc0f; font-size: 1.5em; margin: 10px 0;">Final Score: <span id="finalScore">0</span></p>
+                        <button class="main-btn" onclick="restartSnakeGame()" style="margin-top: 20px;">
+                            <span class="btn-text">PLAY AGAIN</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="mobile-controls">
+                    <button class="control-btn up" id="btnUp">▲</button>
+                    <button class="control-btn left" id="btnLeft">◄</button>
+                    <div class="control-btn center">🐍</div>
+                    <button class="control-btn right" id="btnRight">►</button>
+                    <button class="control-btn down" id="btnDown">▼</button>
+                </div>
+                <div style="margin-top: 30px; text-align: center; color: #d4af37; font-size: 0.95em; line-height: 1.8;">
+                    <p><strong>Desktop Controls:</strong> Arrow Keys or WASD</p>
+                    <p><strong>Mobile Controls:</strong> Use buttons above</p>
+                    <p style="font-size: 0.85em; margin-top: 10px; color: #a8a8a8;">Press SPACE to restart after game over</p>
+                </div>
+            </div>
+            <script>
+                const gameCanvas = document.getElementById('gameCanvas');
+                const gameCtx = gameCanvas.getContext('2d');
+                const scoreElement = document.getElementById('score');
+                const finalScoreElement = document.getElementById('finalScore');
+                const gameOverScreen = document.getElementById('gameOverScreen');
+
+                const TILE_SIZE = 20;
+                const GRID_WIDTH = gameCanvas.width / TILE_SIZE;
+                const GRID_HEIGHT = gameCanvas.height / TILE_SIZE;
+                const GAME_SPEED = 100;
+
+                let snake = [];
+                let food = {};
+                let direction = 'RIGHT';
+                let nextDirection = 'RIGHT';
+                let running = false;
+                let gameOver = false;
+                let score = 0;
+                let gameLoop = null;
+
+                function setupSnakeMobileControls() {
+                    const btnUp = document.getElementById('btnUp');
+                    const btnDown = document.getElementById('btnDown');
+                    const btnLeft = document.getElementById('btnLeft');
+                    const btnRight = document.getElementById('btnRight');
+
+                    btnUp.addEventListener('click', () => {
+                        if (running && direction !== 'DOWN') nextDirection = 'UP';
+                    });
+                    btnDown.addEventListener('click', () => {
+                        if (running && direction !== 'UP') nextDirection = 'DOWN';
+                    });
+                    btnLeft.addEventListener('click', () => {
+                        if (running && direction !== 'RIGHT') nextDirection = 'LEFT';
+                    });
+                    btnRight.addEventListener('click', () => {
+                        if (running && direction !== 'LEFT') nextDirection = 'RIGHT';
+                    });
+                }
+
+                function startSnakeGame() {
+                    snake = [
+                        { x: 5, y: 5 },
+                        { x: 4, y: 5 },
+                        { x: 3, y: 5 }
+                    ];
+                    
+                    direction = 'RIGHT';
+                    nextDirection = 'RIGHT';
+                    score = 0;
+                    gameOver = false;
+                    running = true;
+                    
+                    updateSnakeScore();
+                    gameOverScreen.style.display = 'none';
+                    spawnSnakeFood();
+                    
+                    if (gameLoop) clearInterval(gameLoop);
+                    gameLoop = setInterval(updateSnakeGame, GAME_SPEED);
+                }
+
+                function spawnSnakeFood() {
+                    let validPosition = false;
+                    while (!validPosition) {
+                        food = {
+                            x: Math.floor(Math.random() * GRID_WIDTH),
+                            y: Math.floor(Math.random() * GRID_HEIGHT)
+                        };
+                        validPosition = !snake.some(segment => 
+                            segment.x === food.x && segment.y === food.y
+                        );
+                    }
+                }
+
+                function updateSnakeGame() {
+                    if (!running) return;
+
+                    direction = nextDirection;
+                    const head = { ...snake[0] };
+
+                    switch (direction) {
+                        case 'UP': head.y--; break;
+                        case 'DOWN': head.y++; break;
+                        case 'LEFT': head.x--; break;
+                        case 'RIGHT': head.x++; break;
+                    }
+
+                    if (head.x < 0 || head.x >= GRID_WIDTH || 
+                        head.y < 0 || head.y >= GRID_HEIGHT) {
+                        endSnakeGame();
+                        return;
+                    }
+
+                    if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                        endSnakeGame();
+                        return;
+                    }
+
+                    snake.unshift(head);
+
+                    if (head.x === food.x && head.y === food.y) {
+                        score += 10;
+                        updateSnakeScore();
+                        spawnSnakeFood();
+                    } else {
+                        snake.pop();
+                    }
+
+                    drawSnakeGame();
+                }
+
+                function drawSnakeGame() {
+                    gameCtx.fillStyle = '#9bbc0f';
+                    gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+                    gameCtx.fillStyle = '#306230';
+                    gameCtx.fillRect(
+                        food.x * TILE_SIZE,
+                        food.y * TILE_SIZE,
+                        TILE_SIZE,
+                        TILE_SIZE
+                    );
+
+                    snake.forEach((segment, index) => {
+                        gameCtx.fillStyle = index === 0 ? '#0f380f' : '#306230';
+                        gameCtx.fillRect(
+                            segment.x * TILE_SIZE,
+                            segment.y * TILE_SIZE,
+                            TILE_SIZE,
+                            TILE_SIZE
+                        );
+                    });
+                }
+
+                function endSnakeGame() {
+                    running = false;
+                    gameOver = true;
+                    clearInterval(gameLoop);
+                    finalScoreElement.textContent = score;
+                    gameOverScreen.style.display = 'flex';
+                }
+
+                function updateSnakeScore() {
+                    scoreElement.textContent = score;
+                }
+
+                function restartSnakeGame() {
+                    startSnakeGame();
+                }
+
+                document.addEventListener('keydown', (e) => {
+                    if (gameOver && e.code === 'Space') {
+                        restartSnakeGame();
+                        return;
+                    }
+
+                    if (!running) return;
+
+                    switch (e.key) {
+                        case 'ArrowUp':
+                        case 'w':
+                        case 'W':
+                            if (direction !== 'DOWN') nextDirection = 'UP';
+                            e.preventDefault();
+                            break;
+                        case 'ArrowDown':
+                        case 's':
+                        case 'S':
+                            if (direction !== 'UP') nextDirection = 'DOWN';
+                            e.preventDefault();
+                            break;
+                        case 'ArrowLeft':
+                        case 'a':
+                        case 'A':
+                            if (direction !== 'RIGHT') nextDirection = 'LEFT';
+                            e.preventDefault();
+                            break;
+                        case 'ArrowRight':
+                        case 'd':
+                        case 'D':
+                            if (direction !== 'LEFT') nextDirection = 'RIGHT';
+                            e.preventDefault();
+                            break;
+                    }
+                });
+
+                setupSnakeMobileControls();
+                startSnakeGame();
+            </script>
+        </section>
     </main>
 
     <div class="controls">
@@ -520,6 +1087,12 @@
         </div>
         <div class="control" data-id="contact">
             <i class="fas fa-envelope-open"></i>
+        </div>
+        <div class="control" data-id="fireworks">
+            <i class="fa-solid fa-hand-sparkles"></i>
+        </div>
+        <div class="control" data-id="snake-game">
+            <i class="fas fa-gamepad"></i>
         </div>
     </div>
     <div class="theme-btn">
