@@ -1,8 +1,8 @@
 # 🌐 Personal Web Portfolio
 
-**Developer:** Jhane Rose Sadicon
-**Role:** Junior Web Developer
-**Status:** Deployed on GitHub Pages
+**Developer:** Jhane Rose Sadicon   
+**Role:** Junior Web Developer  
+**Status:** Deployed on GitHub Pages    
 
 ## 📖 About The Project
 Welcome to my personal web portfolio! This site is designed to walk you through my journey from robotics competitions to web design explorations. It serves as a central hub to showcase my skills, projects, and professional background.
