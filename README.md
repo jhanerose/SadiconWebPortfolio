@@ -12,21 +12,19 @@ https://jhanerose.github.io/SadiconWebPortfolio/
 SadiconWebPortfolio/
 ├── .gitignore
 ├── assets/
-│ ├── img/
-│ │ ├── profile/
-│ │ │ ├── hart.jpg
-│ │ │ └── jrs.png
-│ │ └── projects/
-│ │ ├── project01.png
-│ │ └── project02.png
-│ └── videos/
-│ └── timelapse1.mp4
+│   ├── img/          # Profile and project images
+│   └── videos/       # Project or timelapse videos
 ├── index.html
 ├── thank-you.html
+├── Jhane_Rose_Sadicon_Resume.pdf
 ├── js/
-│ └── app.js
+│   └── app.js
 ├── styles/
-│ └── styles.css
+│   ├── styles.css
+│   ├── styles.css.map
+│   ├── styles.scss
+│   └── _media.scss
+├── LICENSE
 └── README.md
 ```
 
